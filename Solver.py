@@ -1,4 +1,5 @@
 import copy
+import random
 
 
 class SudokuSolver:
@@ -53,8 +54,11 @@ class SudokuSolver:
             row = cell // 9
             col = cell % 9
             if _grid[row][col] == 0:
+                # randomizes the order of guesses
+                _ = list(range(1, 10))
+                random.shuffle(_)
                 # check all possible values for cell
-                for x in range(1, 10):
+                for x in _:
                     # check for x in row
                     if x not in _grid[row]:
                         # check for x in column
