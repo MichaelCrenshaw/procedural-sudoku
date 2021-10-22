@@ -1,3 +1,5 @@
+import math
+import copy
 import tkinter as tk
 from tkinter import Frame
 from Solver import SudokuSolver
@@ -8,6 +10,9 @@ WIDTH = HEIGHT = MARGIN * 2 + SIDE * 9
 
 
 class Board(Frame):
+    victory = False
+    row = 0
+    col = 0
 
     def __init__(self, parent, solver, window):
         self.parent = parent
@@ -15,21 +20,25 @@ class Board(Frame):
         self.window = window
         Frame.__init__(self)
 
-        self._build_GUI(window)
+        self.board_grid = solver.get_puzzle()
+        self.start_grid = solver.get_puzzle()
+        self.__build_GUI(window)
 
-    def _build_GUI(self, window):
+    def __build_GUI(self, window):
         window.title("Board")
         self.pack(fill="both", expand=1)
         self.canvas = tk.Canvas(self, width=WIDTH, height=HEIGHT)
         self.canvas.pack(side="top")
 
-        self._build_grid()
-        self._build_puzzle()
+        self.__build_grid()
+        self.__build_puzzle()
 
-        # self.canvas.bind("<Button-1>", self._cell_clicked)
-        # self.canvas.bind("<Key>", self._key_pressed)
+        self.canvas.bind("<Button-1>", self.__on_cell_clicked)
+        self.canvas.bind("<Key>", self.__on_key_pressed)
+        button = tk.Button(self, text="Solve", command=lambda: self.__solve())
+        button.pack(side="bottom")
 
-    def _build_grid(self):
+    def __build_grid(self):
         for _ in range(10):
             if _ % 3 != 0:
                 color = "grey"
@@ -48,34 +57,90 @@ class Board(Frame):
             y1 = MARGIN + _ * SIDE
             self.canvas.create_line(x0, y0, x1, y1, fill=color)
 
-    def _build_puzzle(self):
-        puzzle = self.solver.get_puzzle()
+    def __build_puzzle(self):
         self.canvas.delete("numbers")
+        puzzle = self.board_grid
         for i in range(9):
             for j in range(9):
                 answer = puzzle[i][j]
                 if answer != 0:
                     x = MARGIN + j * SIDE + SIDE / 2
                     y = MARGIN + i * SIDE + SIDE / 2
-                    self.canvas.create_text(x, y, text=answer, tags="numbers", fill="black", font=("Helvetica", "25*"))
+                    self.canvas.create_text(x, y, text=answer, tags="numbers", fill="black", font=("Helvetica",
+                                                                                                   "25",
+                                                                                                   "bold"))
+        self.__check_solve()
+        # # for later implementation which highlights conflicting answered cells
+        # self.__check_cell(j, i)
 
-    # updates a cell in the visual grid
-    def updatecell(self, row, col, x):
-        self.pgrid[row][col] = x
+    def __on_cell_clicked(self, event):
+        x, y = event.x, event.y
+        if self.victory:
+            return
+        elif MARGIN < x < WIDTH - MARGIN and MARGIN < y < HEIGHT - MARGIN:
+            self.canvas.focus_set()
 
-    # creates grid of tkinter labels
-    def pgrid_build(self, win):
-        col_array = []
-        for x in range(0, 9):
-            col = x
-            row_array = []
-            col_array.append(row_array)
-            win.grid_columnconfigure(x, weight=1, uniform="fred")
-            for x in range(0, 9):
-                _ = tk.Button(win).grid(column=col, row=x + 1, sticky="NESW")
+            row = math.floor((y - MARGIN) / SIDE)
+            col = math.floor((x - MARGIN) / SIDE)
 
-                row_array.append(_)
-        return col_array
+            # get row and column of clicked cell
+            if row == self.row and col == self.col:
+                self.row = -1
+                self.col = -1
+            else:
+                self.row = row
+                self.col = col
+
+        self.__select_cell()
+
+    def __select_cell(self):
+        self.canvas.delete("cursor")
+        if self.row >= 0 and self.col >= 0:
+            x0 = MARGIN + self.col * SIDE + 1
+            y0 = MARGIN + self.row * SIDE + 1
+            x1 = MARGIN + (self.col + 1) * SIDE - 1
+            y1 = MARGIN + (self.row + 1) * SIDE - 1
+            self.canvas.create_rectangle(x0, y0, x1, y1, outline="grey", tags="cursor", width=3)
+
+    def __on_key_pressed(self, event):
+        if self.victory:
+            return
+        elif self.row >= 0 and self.col >= 0 and event.char in "1234567890":
+            self.board_grid[self.row][self.col] = int(event.char)
+            self.col, self.row = -1, -1
+            self.__build_puzzle()
+            self.__select_cell()
+            if self.__check_solve():
+                self.__draw_victory()
+
+    def __check_solve(self):
+        points = 0
+        for _ in range(81):
+            grid = copy.deepcopy(self.board_grid)
+            row = _ // 9
+            col = _ % 9
+            __logic = list(range(1, 10))
+            if self.solver.square(row, col, grid) == __logic:
+                if sorted(grid[row]) == __logic:
+                    print(3)
+                    if self.solver.get_column(col, grid) == __logic:
+                        points += 1
+
+        if points == 81:
+            print("you win")
+            self.victory = True
+            self.__draw_victory()
+
+    def __draw_victory(self):
+        x0 = y0 = MARGIN + SIDE * 2
+        x1 = y1 = MARGIN + SIDE * 7
+        self.canvas.create_rectangle(
+            x0, y0, x1, y1,
+            tags="victory", fill="dark orange", outline="orange")
+
+    def __solve(self):
+        self.board_grid = self.solver.solve(self.start_grid)
+        self.__build_puzzle()
 
 
 def main():
