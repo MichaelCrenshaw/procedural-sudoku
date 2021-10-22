@@ -14,12 +14,13 @@ class Board(Frame):
     row = 0
     col = 0
 
-
     def __init__(self, parent, solver, window):
         self.parent = parent
         self.solver = solver
         self.window = window
         Frame.__init__(self)
+
+        self.label = tk.Label(self)
 
         self.board_grid = solver.get_puzzle()
         self.start_grid = solver.get_puzzle()
@@ -133,6 +134,7 @@ class Board(Frame):
             self.__draw_victory()
 
     def __draw_victory(self):
+        self.label.destroy()
         self.label = tk.Label(self, text="You Win!", font=("Ariel", "20"))
         self.label.pack(side="bottom")
 
