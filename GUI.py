@@ -133,7 +133,7 @@ class Board(Frame):
             self.__draw_victory()
 
     def __draw_victory(self):
-        self.label = tk.Label(self, text="You Win!", font=("Ariel", "25"))
+        self.label = tk.Label(self, text="You Win!", font=("Ariel", "20"))
         self.label.pack(side="bottom")
 
     def __solve(self):
