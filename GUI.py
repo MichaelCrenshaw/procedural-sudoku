@@ -148,6 +148,7 @@ class Board(Frame):
     # create new puzzle for user to solve
     def __create_puzzle(self):
         self.label.configure(text="Please wait up to a minute for your puzzle...")
+        self.update()
         self.solver.make_puzzle()
         self.board_grid = self.solver.get_puzzle()
         self.start_grid = self.solver.get_puzzle()
