@@ -14,6 +14,7 @@ class Board(Frame):
     row = 0
     col = 0
 
+
     def __init__(self, parent, solver, window):
         self.parent = parent
         self.solver = solver
@@ -132,11 +133,8 @@ class Board(Frame):
             self.__draw_victory()
 
     def __draw_victory(self):
-        x0 = y0 = MARGIN + SIDE * 2
-        x1 = y1 = MARGIN + SIDE * 7
-        self.canvas.create_rectangle(
-            x0, y0, x1, y1,
-            tags="victory", fill="dark orange", outline="orange")
+        self.label = tk.Label(self, text="You Win!", font=("Ariel", "25"))
+        self.label.pack(side="bottom")
 
     def __solve(self):
         self.board_grid = self.solver.solve(self.start_grid)
