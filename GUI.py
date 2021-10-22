@@ -13,6 +13,7 @@ class Board(Frame):
     victory = False
     row = 0
     col = 0
+    button = None
 
     def __init__(self, parent, solver, window):
         self.parent = parent
@@ -37,8 +38,8 @@ class Board(Frame):
 
         self.canvas.bind("<Button-1>", self.__on_cell_clicked)
         self.canvas.bind("<Key>", self.__on_key_pressed)
-        button = tk.Button(self, text="Solve", command=lambda: self.__solve())
-        button.pack(side="bottom")
+        self.button = tk.Button(self, text="Solve", command=lambda: self.__solve())
+        self.button.pack(side="bottom")
 
     def __build_grid(self):
         for _ in range(10):
@@ -124,7 +125,6 @@ class Board(Frame):
             __logic = list(range(1, 10))
             if self.solver.square(row, col, grid) == __logic:
                 if sorted(grid[row]) == __logic:
-                    print(3)
                     if self.solver.get_column(col, grid) == __logic:
                         points += 1
 
@@ -137,10 +137,20 @@ class Board(Frame):
         self.label.destroy()
         self.label = tk.Label(self, text="You Win!", font=("Ariel", "20"))
         self.label.pack(side="bottom")
+        self.button.configure(text="New Puzzle", command=lambda: self.__create_puzzle())
+        # self.button["text"] = "New Puzzle"
+        # self.button.pack(side="bottom")
 
+    # solve puzzle using solver backtracking
     def __solve(self):
         self.board_grid = self.solver.solve(self.start_grid)
         self.__build_puzzle()
+
+    # create new puzzle for user to solve
+    def __create_puzzle(self):
+        self.solver.make_puzzle()
+        self.board_grid = solver.get_puzzle()
+        self.start_grid = solver.get_puzzle()
 
 
 def main():

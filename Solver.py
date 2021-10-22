@@ -49,7 +49,7 @@ class SudokuSolver:
         _.sort()
         return _
 
-    def backtrack(self, cell, _grid):
+    def __backtrack(self, cell, _grid):
         if cell <= 80:
             row = cell // 9
             col = cell % 9
@@ -72,9 +72,8 @@ class SudokuSolver:
                                 # final crawler instance returns True
                                 if row == 8 & col == 8:
                                     return _grid
-                                # print(grid)
                                 # disables crawlers once one finds a solution, creates next crawler
-                                if self.backtrack(cell + 1, _grid):
+                                if self.__backtrack(cell + 1, _grid):
                                     return _grid
                 else:
                     # removes guesses once the cell can't be solved
@@ -82,33 +81,44 @@ class SudokuSolver:
                     return
             else:
                 # disables crawlers once one finds a solution, creates next crawler
-                if self.backtrack(cell + 1, _grid):
+                if self.__backtrack(cell + 1, _grid):
                     return _grid
                 return
         else:
             return _grid
 
     def solve(self, grid):
-        return copy.deepcopy(self.backtrack(0, grid))
+        return copy.deepcopy(self.__backtrack(0, grid))
 
     def get_puzzle(self):
         grid = copy.deepcopy(self.grid)
         return grid
 
-    def set_puzzle(self, new_grid):
-        self.grid = new_grid
-
     def get_column(self, col, _grid):
         _ = []
         for x in range(9):
             _.append(_grid[x][col])
-        print(_)
         return sorted(_)
 
-    def reset_puzzle(self):
-        self.puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    def __reduce_puzzle(self, _grid):
+        _temp = copy.deepcopy(_grid)
+        x = random.randrange(0, 9)
+        y = random.randrange(0, 9)
+        _temp[x][y] = 0
+        return _temp
+
+    def make_puzzle(self):
+        tries = 0
+        self.grid = copy.deepcopy(self.puz_grid)
+        self.grid = self.__backtrack(0, self.grid)
+        while tries < 100:
+            temp_grid = self.__reduce_puzzle(self.grid)
+            if self.__backtrack(0, temp_grid) is None:
+                tries += 1
+            else:
+                tries = 0
+                self.grid = copy.copy(temp_grid)
+
 
 # start_time = time.time()
 # backtrack(cell)
