@@ -14,16 +14,9 @@ class SudokuSolver:
     grid.append([0, 0, 0, 0, 0, 0, 0, 7, 4])
     grid.append([0, 0, 5, 2, 0, 6, 3, 0, 0])
     # blank grid for new puzzle creation
-    puz_grid = []
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    puz_grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     def square(self, row, col, _grid):
         if row < 3:
