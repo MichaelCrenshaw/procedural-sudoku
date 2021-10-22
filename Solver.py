@@ -112,7 +112,10 @@ class SudokuSolver:
         _temp = copy.deepcopy(_grid)
         x = random.randrange(0, 9)
         y = random.randrange(0, 9)
-        _temp[x][y] = 0
+        if _temp[x][y] != 0:
+            _temp[x][y] = 0
+        else:
+            return self.__reduce_puzzle(_grid)
         return _temp
 
     def make_puzzle(self):
@@ -130,7 +133,7 @@ class SudokuSolver:
                 for x in range(9):
                     _ = copy.deepcopy(_grid[x])
                     _zeroes += _.count(0)
-            if _zeroes > 60:
+            if _zeroes > 59:
                 building = False
             elif self.__backtrack(0, temp_grid) is None:
                 tries += 1
