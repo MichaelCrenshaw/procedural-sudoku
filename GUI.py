@@ -138,19 +138,24 @@ class Board(Frame):
         self.label = tk.Label(self, text="You Win!", font=("Ariel", "20"))
         self.label.pack(side="bottom")
         self.button.configure(text="New Puzzle", command=lambda: self.__create_puzzle())
-        # self.button["text"] = "New Puzzle"
-        # self.button.pack(side="bottom")
 
     # solve puzzle using solver backtracking
     def __solve(self):
+        self.board_grid = []
         self.board_grid = self.solver.solve(self.start_grid)
         self.__build_puzzle()
 
     # create new puzzle for user to solve
     def __create_puzzle(self):
         self.solver.make_puzzle()
-        self.board_grid = solver.get_puzzle()
-        self.start_grid = solver.get_puzzle()
+        self.board_grid = self.solver.get_puzzle()
+        self.start_grid = self.solver.get_puzzle()
+
+        self.__build_grid()
+        self.__build_puzzle()
+
+        self.button.configure(text="Solve", command=lambda: self.__solve())
+
 
 
 def main():

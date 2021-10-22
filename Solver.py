@@ -3,21 +3,26 @@ import random
 
 
 class SudokuSolver:
-    # creates sudoku grid to solve
-    grid = []
-    grid.append([3, 0, 6, 5, 0, 8, 4, 0, 0])
-    grid.append([5, 2, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 8, 7, 0, 0, 0, 0, 3, 1])
-    grid.append([0, 0, 3, 0, 1, 0, 0, 8, 0])
-    grid.append([9, 0, 0, 8, 6, 3, 0, 0, 5])
-    grid.append([0, 5, 0, 0, 9, 0, 6, 0, 0])
-    grid.append([1, 3, 0, 0, 0, 0, 2, 5, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 7, 4])
-    grid.append([0, 0, 5, 2, 0, 6, 3, 0, 0])
-    # blank grid for new puzzle creation
-    puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+    def __init__(self):
+        # creates sudoku grid to solve
+        grid = []
+        grid.append([3, 0, 6, 5, 0, 8, 4, 0, 0])
+        grid.append([5, 2, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 8, 7, 0, 0, 0, 0, 3, 1])
+        grid.append([0, 0, 3, 0, 1, 0, 0, 8, 0])
+        grid.append([9, 0, 0, 8, 6, 3, 0, 0, 5])
+        grid.append([0, 5, 0, 0, 9, 0, 6, 0, 0])
+        grid.append([1, 3, 0, 0, 0, 0, 2, 5, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 7, 4])
+        grid.append([0, 0, 5, 2, 0, 6, 3, 0, 0])
+        # blank grid for new puzzle creation
+        puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+        self.grid = grid
+        self.puz_grid = puz_grid
 
     def square(self, row, col, _grid):
         if row < 3:
@@ -90,6 +95,9 @@ class SudokuSolver:
     def solve(self, grid):
         return copy.deepcopy(self.__backtrack(0, grid))
 
+    def set_puzzle(self, puzzle):
+        self.grid = copy.deepcopy(puzzle)
+
     def get_puzzle(self):
         grid = copy.deepcopy(self.grid)
         return grid
@@ -109,32 +117,28 @@ class SudokuSolver:
 
     def make_puzzle(self):
         tries = 0
+        run = 0
+        building = True
         self.grid = copy.deepcopy(self.puz_grid)
-        self.grid = self.__backtrack(0, self.grid)
-        while tries < 100:
-            temp_grid = self.__reduce_puzzle(self.grid)
-            if self.__backtrack(0, temp_grid) is None:
+        self.grid = copy.deepcopy(self.__backtrack(0, self.grid))
+        temp_grid = copy.deepcopy(self.__reduce_puzzle(self.grid))
+        while building and tries < 5:
+            _grid = copy.deepcopy(temp_grid)
+            _grid = copy.deepcopy(self.__reduce_puzzle(temp_grid))
+            _zeroes = 0
+            if run > 50:
+                for x in range(9):
+                    _ = copy.deepcopy(_grid[x])
+                    _zeroes += _.count(0)
+            if _zeroes > 60:
+                building = False
+            elif self.__backtrack(0, temp_grid) is None:
                 tries += 1
             else:
+                temp_grid = _grid
                 tries = 0
-                self.grid = copy.copy(temp_grid)
-
+                run += 1
+        self.set_puzzle(temp_grid)
 
 # start_time = time.time()
-# backtrack(cell)
 # print(time.time() - start_time)
-# print(grid)
-
-# # creates grid of tkinter labels
-# def __pgrid_build(self, win):
-#     col_array = []
-#     for x in range(0, 9):
-#         col = x
-#         row_array = []
-#         col_array.append(row_array)
-#         win.grid_columnconfigure(x, weight=1, uniform="fred")
-#         for x in range(0, 9):
-#             _ = tk.Button(win).grid(column=col, row=x + 1, sticky="NESW")
-#
-#             row_array.append(_)
-#     return col_array
