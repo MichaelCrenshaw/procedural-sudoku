@@ -147,7 +147,7 @@ class Board(Frame):
 
     # create new puzzle for user to solve
     def __create_puzzle(self):
-        self.label.configure(text="Please wait up to a minute for your puzzle...")
+        self.label.configure(text="Please wait up to ten seconds for your puzzle...")
         self.update()
         self.solver.make_puzzle()
         self.board_grid = self.solver.get_puzzle()
@@ -158,7 +158,7 @@ class Board(Frame):
 
         self.button.configure(text="Solve", command=lambda: self.__solve())
         self.label.destroy()
-
+        self.victory = False
 
 
 def main():
