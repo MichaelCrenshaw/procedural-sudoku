@@ -1,22 +1,28 @@
 import copy
+import random
 
 
 class SudokuSolver:
-    # creates sudoku grid to solve
-    grid = []
-    grid.append([3, 0, 6, 5, 0, 8, 4, 0, 0])
-    grid.append([5, 2, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 8, 7, 0, 0, 0, 0, 3, 1])
-    grid.append([0, 0, 3, 0, 1, 0, 0, 8, 0])
-    grid.append([9, 0, 0, 8, 6, 3, 0, 0, 5])
-    grid.append([0, 5, 0, 0, 9, 0, 6, 0, 0])
-    grid.append([1, 3, 0, 0, 0, 0, 2, 5, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 7, 4])
-    grid.append([0, 0, 5, 2, 0, 6, 3, 0, 0])
-    # blank grid for new puzzle creation
-    puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+    def __init__(self):
+        # creates sudoku grid to solve
+        grid = []
+        grid.append([3, 0, 6, 5, 0, 8, 4, 0, 0])
+        grid.append([5, 2, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 8, 7, 0, 0, 0, 0, 3, 1])
+        grid.append([0, 0, 3, 0, 1, 0, 0, 8, 0])
+        grid.append([9, 0, 0, 8, 6, 3, 0, 0, 5])
+        grid.append([0, 5, 0, 0, 9, 0, 6, 0, 0])
+        grid.append([1, 3, 0, 0, 0, 0, 2, 5, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 7, 4])
+        grid.append([0, 0, 5, 2, 0, 6, 3, 0, 0])
+        # blank grid for new puzzle creation
+        puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+        self.grid = grid
+        self.puz_grid = puz_grid
 
     def square(self, row, col, _grid):
         if row < 3:
@@ -48,13 +54,16 @@ class SudokuSolver:
         _.sort()
         return _
 
-    def backtrack(self, cell, _grid):
+    def __backtrack(self, cell, _grid):
         if cell <= 80:
             row = cell // 9
             col = cell % 9
             if _grid[row][col] == 0:
+                # randomizes the order of guesses
+                _ = list(range(1, 10))
+                random.shuffle(_)
                 # check all possible values for cell
-                for x in range(1, 10):
+                for x in _:
                     # check for x in row
                     if x not in _grid[row]:
                         # check for x in column
@@ -68,9 +77,8 @@ class SudokuSolver:
                                 # final crawler instance returns True
                                 if row == 8 & col == 8:
                                     return _grid
-                                # print(grid)
                                 # disables crawlers once one finds a solution, creates next crawler
-                                if self.backtrack(cell + 1, _grid):
+                                if self.__backtrack(cell + 1, _grid):
                                     return _grid
                 else:
                     # removes guesses once the cell can't be solved
@@ -78,49 +86,62 @@ class SudokuSolver:
                     return
             else:
                 # disables crawlers once one finds a solution, creates next crawler
-                if self.backtrack(cell + 1, _grid):
+                if self.__backtrack(cell + 1, _grid):
                     return _grid
                 return
         else:
             return _grid
 
     def solve(self, grid):
-        return copy.deepcopy(self.backtrack(0, grid))
+        return copy.deepcopy(self.__backtrack(0, grid))
+
+    def set_puzzle(self, puzzle):
+        self.grid = copy.deepcopy(puzzle)
 
     def get_puzzle(self):
         grid = copy.deepcopy(self.grid)
         return grid
 
-    def set_puzzle(self, new_grid):
-        self.grid = new_grid
-
     def get_column(self, col, _grid):
         _ = []
         for x in range(9):
             _.append(_grid[x][col])
-        print(_)
         return sorted(_)
 
-    def reset_puzzle(self):
-        self.puz_grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    def __reduce_puzzle(self, _grid):
+        _temp = copy.deepcopy(_grid)
+        x = random.randrange(0, 9)
+        y = random.randrange(0, 9)
+        if _temp[x][y] != 0:
+            _temp[x][y] = 0
+        else:
+            return self.__reduce_puzzle(_grid)
+        return _temp
+
+    def make_puzzle(self):
+        tries = 0
+        run = 0
+        building = True
+        self.grid = copy.deepcopy(self.puz_grid)
+        self.grid = copy.deepcopy(self.__backtrack(0, self.grid))
+        temp_grid = copy.deepcopy(self.__reduce_puzzle(self.grid))
+        while building and tries < 5:
+            _grid = copy.deepcopy(temp_grid)
+            _grid = copy.deepcopy(self.__reduce_puzzle(temp_grid))
+            _zeroes = 0
+            if run > 50:
+                for x in range(9):
+                    _ = copy.deepcopy(_grid[x])
+                    _zeroes += _.count(0)
+            if _zeroes > 59:
+                building = False
+            elif self.__backtrack(0, temp_grid) is None:
+                tries += 1
+            else:
+                temp_grid = _grid
+                tries = 0
+                run += 1
+        self.set_puzzle(temp_grid)
 
 # start_time = time.time()
-# backtrack(cell)
 # print(time.time() - start_time)
-# print(grid)
-
-# # creates grid of tkinter labels
-# def __pgrid_build(self, win):
-#     col_array = []
-#     for x in range(0, 9):
-#         col = x
-#         row_array = []
-#         col_array.append(row_array)
-#         win.grid_columnconfigure(x, weight=1, uniform="fred")
-#         for x in range(0, 9):
-#             _ = tk.Button(win).grid(column=col, row=x + 1, sticky="NESW")
-#
-#             row_array.append(_)
-#     return col_array
