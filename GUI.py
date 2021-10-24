@@ -69,9 +69,13 @@ class Board(Frame):
                 if answer != 0:
                     x = MARGIN + j * SIDE + SIDE / 2
                     y = MARGIN + i * SIDE + SIDE / 2
-                    self.canvas.create_text(x, y, text=answer, tags="numbers", fill="black", font=("Helvetica",
-                                                                                                   "25",
-                                                                                                   "bold"))
+                    if self.solver.get_puzzle()[i][j] != 0:
+                        self.canvas.create_text(x, y, text=answer, tags="numbers", fill="black", font=("Helvetica",
+                                                                                                       "24",
+                                                                                                       "bold"))
+                    else:
+                        self.canvas.create_text(x, y, text=answer, tags="numbers", fill="#424242", font=("Helvetica",
+                                                                                                         "22"))
         self.__check_solve()
         # # for later implementation which highlights conflicting answered cells
         # self.__check_cell(j, i)
