@@ -70,7 +70,8 @@ class Board(Frame):
                     x = MARGIN + j * SIDE + SIDE / 2
                     y = MARGIN + i * SIDE + SIDE / 2
                     if self.solver.get_puzzle()[i][j] != 0:
-                        self.canvas.create_text(x, y, text=answer, tags="numbers", fill="black", font=("Helvetica",
+                        self.board_grid[i][j] = self.solver.get_puzzle()[i][j]
+                        self.canvas.create_text(x, y, text=self.solver.get_puzzle()[i][j], tags="numbers", fill="black", font=("Helvetica",
                                                                                                        "24",
                                                                                                        "bold"))
                     else:
