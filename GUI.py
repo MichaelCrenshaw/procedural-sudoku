@@ -147,9 +147,12 @@ class Board(Frame):
 
     # solve puzzle using solver backtracking
     def __solve(self):
+        self.label.configure(text="Please wait for your puzzle to be solved...")
+        self.update()
         self.board_grid = []
         self.board_grid = self.solver.solve(self.start_grid)
         self.__build_puzzle()
+        self.label.configure(text="")
 
     # create new puzzle for user to solve
     def __create_puzzle(self):
@@ -163,7 +166,7 @@ class Board(Frame):
         self.__build_puzzle()
 
         self.button.configure(text="Solve", command=lambda: self.__solve())
-        self.label.destroy()
+        self.label.configure(text="")
         self.victory = False
 
 
